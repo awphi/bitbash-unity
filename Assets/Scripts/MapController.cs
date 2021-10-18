@@ -7,18 +7,13 @@ public class MapController : MonoBehaviour
     public long seed = 10;
     public GameObject chunkPrefab;
 
-    private LevelTile _grassTest;
-
-    private OpenSimplexNoise _heightNoise;
-    private OpenSimplexNoise _moistureNoise;
+    private WorldGenerator _worldGenerator;
     private readonly Dictionary<Vector2Int, ChunkController> _chunkMap = new Dictionary<Vector2Int, ChunkController>();
 
 
-    private void Start()
+    private void Awake()
     {
-        _heightNoise = new OpenSimplexNoise(seed);
-        _moistureNoise = new OpenSimplexNoise(seed + 16);
-        _grassTest = TileOracle.GetTile(TileType.Grass);
+        _worldGenerator = new WorldGenerator(seed);
     }
 
     public void UnloadChunk(Vector2Int chunk)
@@ -38,13 +33,11 @@ public class MapController : MonoBehaviour
         }
 
         var n = CreateChunk(chunk);
-        n.SetTileAt(0, 0, 0, _grassTest);
-        n.SetTileAt(0, 7, 7, _grassTest);
-        n.SetTileAt(0, 0, 7, _grassTest);
-        n.SetTileAt(0, 7, 0, _grassTest);
+        // TODO deserialization
+        _worldGenerator.GenerateChunk(n);
         return n;
     }
-    
+
 
     private ChunkController CreateChunk(Vector2Int chunk)
     {
